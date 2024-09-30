@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "Simple File Manager",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "start": "node ./index.js"
+    "start": "node ./src/index.js"
   },
-  "author": "Firespark",
-  "license": "ISC"
+  "author": "Firespark"
 }
