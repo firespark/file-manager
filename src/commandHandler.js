@@ -1,9 +1,11 @@
+import { currentDirectory } from './index.js';
+import { showCurrentDir } from './modules/common.js';
 import * as commands from './modules/commands.js'; 
 
-const checkCommand = (command) => {
+const checkCommand = async (command) => {
     switch (command) {
-        case 'list':
-
+        case 'ls':
+            await commands.ls(currentDirectory1);
             break;
 
         case 'exit':
@@ -14,6 +16,7 @@ const checkCommand = (command) => {
             console.log(`Unknown command ${command}`);
             break;
     }
+    showCurrentDir(currentDirectory);
 };
 
 export {
