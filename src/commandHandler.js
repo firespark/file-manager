@@ -5,7 +5,7 @@ import * as commands from './modules/commands.js';
 const checkCommand = async (command) => {
     switch (command) {
         case 'ls':
-            await commands.ls(currentDirectory1);
+            await commands.ls(currentDirectory);
             break;
 
         case 'exit':

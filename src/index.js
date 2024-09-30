@@ -24,7 +24,7 @@ process.stdin.on('data', (input) => {
     checkCommand(input.toString().trim());
 });
 
-process.on('SIGINT', function() {
+/* process.on('SIGINT', function() {
 
     process.exit(0);
 });
@@ -37,6 +37,6 @@ process.on('exit', function() {
 process.on('uncaughtException', (err) => {
     console.error(`An error occured: ${err.message}`);
     process.exit(1);
-});
+}); */
 
 export { currentDirectory };
