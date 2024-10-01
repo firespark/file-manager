@@ -39,6 +39,10 @@ const checkCommand = async (command) => {
             await operations.mv(commandArray[1], commandArray[2]);
             break;
 
+        case 'rm':
+            await operations.rm(commandArray[1]);
+            break;
+
 
         case 'stat':
             await navigation.stat(commandArray[1]);

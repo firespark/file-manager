@@ -127,7 +127,27 @@ const mv = async (file, newDir) => {
     }
     catch (error) {
         //console.log(error);
-        console.error('Could not copy a file');
+        console.error('Could not move a file');
+    }
+
+};
+
+const rm = async (file) => {
+    try {
+
+        const fileDel = join(currentDirectory, file);
+
+        if (!existsSync(fileDel)) {
+            console.error(`File ${file} does not exist`);
+            return;
+        }
+
+        await unlink(fileDel);
+
+    }
+    catch (error) {
+        //console.log(error);
+        console.error('Could not delete a file');
     }
 
 };
@@ -137,5 +157,6 @@ export {
     add,
     rn,
     cp,
-    mv
+    mv,
+    rm
 }
