@@ -3,17 +3,25 @@ import { showCurrentDir } from './modules/common.js';
 import * as commands from './modules/commands.js'; 
 
 const checkCommand = async (command) => {
-    switch (command) {
+    const commandArray = command.split(/\s+/);
+    switch (commandArray[0]) {
         case 'ls':
-            await commands.ls(currentDirectory);
+            await commands.ls(commandArray[1]);
+            break;
+        
+        case 'stat':
+            await commands.stat(commandArray[1]);
             break;
 
         case 'exit':
             process.exit(0);
             break;
-
+        case 'error':
+            DeliberateError;
+            break;
+        
         default:
-            console.log(`Unknown command ${command}`);
+            console.log(`Unknown command '${commandArray[0]}'`);
             break;
     }
     showCurrentDir(currentDirectory);

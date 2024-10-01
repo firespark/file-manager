@@ -1,6 +1,8 @@
 import os from 'node:os';
 import { showCurrentDir } from './modules/common.js';
 import { checkCommand } from './commandHandler.js';
+import { colors } from './modules/common.js';
+import './exitHandler.js';
 
 const homeDirectory = os.homedir();
 
@@ -17,26 +19,11 @@ for (let i = 0; i < args.length; i += 1) {
     }
 }
 
-console.log(`Welcome to the File Manager, ${username}!`);
+console.log(`${colors.yellow}Welcome to the File Manager, ${username}!${colors.reset}`);
 showCurrentDir(homeDirectory);
 
 process.stdin.on('data', (input) => {
     checkCommand(input.toString().trim());
 });
 
-/* process.on('SIGINT', function() {
-
-    process.exit(0);
-});
-
-process.on('exit', function() {
-    console.log(`Thank you for using File Manager, ${username}, goodbye!`);
-    process.exit(0);
-});
-
-process.on('uncaughtException', (err) => {
-    console.error(`An error occured: ${err.message}`);
-    process.exit(1);
-}); */
-
-export { currentDirectory };
+export { currentDirectory, username };
