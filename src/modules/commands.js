@@ -3,19 +3,33 @@ import { lstatSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 
 import { currentDirectory, changeCurrentDirectory } from '../index.js';
-import { colors } from './common.js';
+import { colors, isValidDir } from './common.js';
 import { printFilesAsTable } from './fileFunctions.js';
 
 
 const ls = async (dir = currentDirectory) => {
-    let files = await readdir(dir);
+    if (isValidDir(dir)) {
+        let files = await readdir(dir);
 
-    printFilesAsTable(files, dir);
+        printFilesAsTable(files, dir);
+    }
 };
 
 const up = async () => {
+    
     let upDirectory = dirname(currentDirectory);
-    changeCurrentDirectory(upDirectory);
+    if (isValidDir(upDirectory)) {
+        changeCurrentDirectory(upDirectory);
+    }
+    
+};
+
+const cd = async (dir) => {
+    
+    if (isValidDir(dir)) {
+        changeCurrentDirectory(dir);
+    }
+    
 };
 
 const stat = async (file) => {
@@ -32,9 +46,10 @@ const stat = async (file) => {
         return;
     };
 };
-  
-export { 
-    ls, 
+
+export {
+    ls,
     stat,
-    up
+    up,
+    cd
 };

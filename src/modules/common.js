@@ -1,5 +1,30 @@
+import { lstatSync } from 'node:fs';
+import { access } from 'node:fs/promises';
+
 const showCurrentDir = (dir) => {
     console.log(`\nYou are currently in ${dir}\n`);
+};
+
+const isValidDir = async (dir) => {
+
+    try {
+
+        await access(dir);
+
+        const stats = lstatSync(dir);
+
+        return stats.isDirectory()
+    }
+    catch (error) {
+        if (error.code === 'ENOENT') {
+            console.error('Directory does not exist');
+        }
+        else {
+            console.error(error);
+        }
+        
+        return false;
+    }
 };
 
 const colors = {
@@ -9,8 +34,8 @@ const colors = {
     underscore: "\x1b[4m",
     blink: "\x1b[5m",
     reverse: "\x1b[7m",
-    hidden: '\x1b[8m',   
-    
+    hidden: '\x1b[8m',
+
     black: '\x1b[30m',
     red: '\x1b[31m',
     green: '\x1b[32m',
@@ -32,4 +57,8 @@ const colors = {
     lightGray: '\x1b[90;1m',
 };
 
-export { showCurrentDir, colors };
+export { 
+    showCurrentDir, 
+    colors,
+    isValidDir
+};
