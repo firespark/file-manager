@@ -46,7 +46,7 @@ function printFilesAsTable(files, dir) {
             default:
                 break;
         }
-        fileColor = file.type == 'Protected' ? colors.dim : fileColor;
+        fileColor = file.type == 'Protected' ? colors.gray : fileColor;
 
         console.log(
             fileColor +

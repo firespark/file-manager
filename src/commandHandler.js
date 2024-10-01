@@ -1,24 +1,35 @@
 import { currentDirectory } from './index.js';
 import { showCurrentDir } from './modules/common.js';
-import * as commands from './modules/commands.js';
+import * as navigation from './modules/navigation.js';
+import * as operations from './modules/operations.js';
 
 const checkCommand = async (command) => {
     const commandArray = command.split(/\s+/);
     switch (commandArray[0]) {
         case 'ls':
-            await commands.ls(commandArray[1]);
+            await navigation.ls(commandArray[1]);
             break;
 
         case 'up':
-            await commands.up();
+            await navigation.up();
             break;
 
         case 'cd':
-            await commands.cd(commandArray[1]);
+            await navigation.cd(commandArray[1]);
             break;
 
+
+        case 'cat':
+            await operations.cat(commandArray[1]);
+            break;
+
+        case 'add':
+            await operations.add(commandArray[1]);
+            break;
+
+
         case 'stat':
-            await commands.stat(commandArray[1]);
+            await navigation.stat(commandArray[1]);
             break;
 
         case 'exit':

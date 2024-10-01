@@ -27,6 +27,26 @@ const isValidDir = async (dir) => {
     }
 };
 
+const isValidFile = async (file) => {
+
+    try {
+
+        await access(file);
+
+        return true;
+    }
+    catch (error) {
+        if (error.code === 'ENOENT') {
+            console.error('File does not exist');
+        }
+        else {
+            console.error(error);
+        }
+        
+        return false;
+    }
+};
+
 const colors = {
     reset: '\x1b[0m',
     bright: "\x1b[1m",
@@ -46,7 +66,7 @@ const colors = {
     white: '\x1b[37m',
     default: '\x1b[39m',
 
-    lightGray: '\x1b[90m',
+    gray: '\x1b[90m',
     lightRed: '\x1b[91m',
     lightGreen: '\x1b[92m',
     lightYellow: '\x1b[93m',
@@ -60,5 +80,6 @@ const colors = {
 export { 
     showCurrentDir, 
     colors,
-    isValidDir
+    isValidDir,
+    isValidFile
 };
