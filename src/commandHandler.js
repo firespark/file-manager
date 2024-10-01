@@ -27,6 +27,10 @@ const checkCommand = async (command) => {
             await operations.add(commandArray[1]);
             break;
 
+        case 'rn':
+            await operations.rn(commandArray[1], commandArray[2]);
+            break;
+
 
         case 'stat':
             await navigation.stat(commandArray[1]);

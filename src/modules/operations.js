@@ -1,6 +1,6 @@
 import { createReadStream, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { writeFile } from 'node:fs/promises';
+import { writeFile, rename } from 'node:fs/promises';
 
 import { currentDirectory } from '../index.js';
 import { isValidFile } from './common.js';
@@ -30,12 +30,30 @@ const add = async (fileName) => {
         await writeFile(fileAdd, '');
     }
     catch (error) {
-        console.log(error);
+        console.error('Could not create a file');
+    }
+
+};
+
+const rn = async (oldName, newName) => {
+    try {
+        const oldFile = join(currentDirectory, oldName);
+        const newFile = join(currentDirectory, newName);
+
+        if (!existsSync(oldFile)) throw (`File ${oldName} does not exist`);
+        if (existsSync(newFile)) throw (`File ${newName} already exists`);
+
+        await rename(oldFile, newFile);
+    }
+    catch (error) {
+        //console.log(error);
+        console.error('Could not rename a file');
     }
 
 };
 
 export {
     cat,
-    add
+    add,
+    rn
 }
