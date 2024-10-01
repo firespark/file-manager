@@ -11,6 +11,10 @@ let currentDirectory = homeDirectory;
 
 const args = process.argv.slice(2);
 
+function changeCurrentDirectory(dir) {
+    currentDirectory = dir;
+}
+
 for (let i = 0; i < args.length; i += 1) {
     const propArr = args[i].replace('--', '').split('=');
     if (propArr.length == 2 && propArr[0] == 'username') {
@@ -26,4 +30,8 @@ process.stdin.on('data', (input) => {
     checkCommand(input.toString().trim());
 });
 
-export { currentDirectory, username };
+export { 
+    currentDirectory, 
+    username,
+    changeCurrentDirectory 
+};

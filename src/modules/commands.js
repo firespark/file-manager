@@ -1,8 +1,8 @@
 import { readdir } from 'node:fs/promises';
 import { lstatSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
 
-import { currentDirectory } from '../index.js';
+import { currentDirectory, changeCurrentDirectory } from '../index.js';
 import { colors } from './common.js';
 import { printFilesAsTable } from './fileFunctions.js';
 
@@ -11,6 +11,11 @@ const ls = async (dir = currentDirectory) => {
     let files = await readdir(dir);
 
     printFilesAsTable(files, dir);
+};
+
+const up = async () => {
+    let upDirectory = dirname(currentDirectory);
+    changeCurrentDirectory(upDirectory);
 };
 
 const stat = async (file) => {
@@ -28,4 +33,8 @@ const stat = async (file) => {
     };
 };
   
-export { ls, stat };
+export { 
+    ls, 
+    stat,
+    up
+};

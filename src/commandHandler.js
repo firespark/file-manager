@@ -8,6 +8,10 @@ const checkCommand = async (command) => {
         case 'ls':
             await commands.ls(commandArray[1]);
             break;
+
+            case 'up':
+                await commands.up();
+                break;
         
         case 'stat':
             await commands.stat(commandArray[1]);
@@ -16,6 +20,7 @@ const checkCommand = async (command) => {
         case 'exit':
             process.exit(0);
             break;
+            
         case 'error':
             DeliberateError;
             break;

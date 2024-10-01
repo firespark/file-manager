@@ -96,3 +96,5 @@ function getSortedFilesAndDirectories(files, dir) {
 
     return sortedFiles;
 }
+
+export { printFilesAsTable };
