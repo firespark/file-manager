@@ -1,19 +1,20 @@
-import { lstatSync } from 'node:fs';
-import { access } from 'node:fs/promises';
+import { lstatSync, existsSync } from 'node:fs';
 
 const showCurrentDir = (dir) => {
     console.log(`\nYou are currently in ${dir}\n`);
 };
 
-const isValidDir = async (dir) => {
+const isValidDir = (dir) => {
 
     try {
 
-        await access(dir);
+        if (existsSync(dir)) {
+            const stats = lstatSync(dir);
 
-        const stats = lstatSync(dir);
+            return stats.isDirectory();
+        }
+        return false;
 
-        return stats.isDirectory()
     }
     catch (error) {
         if (error.code === 'ENOENT') {
@@ -22,18 +23,21 @@ const isValidDir = async (dir) => {
         else {
             console.error(error);
         }
-        
+
         return false;
     }
 };
 
-const isValidFile = async (file) => {
+const isValidFile = (file) => {
 
     try {
 
-        await access(file);
+        if (existsSync(file)) {
+            const stats = lstatSync(file);
 
-        return true;
+            return stats.isFile();
+        }
+        return false;
     }
     catch (error) {
         if (error.code === 'ENOENT') {
@@ -42,7 +46,7 @@ const isValidFile = async (file) => {
         else {
             console.error(error);
         }
-        
+
         return false;
     }
 };
@@ -77,8 +81,8 @@ const colors = {
     lightGray: '\x1b[90;1m',
 };
 
-export { 
-    showCurrentDir, 
+export {
+    showCurrentDir,
     colors,
     isValidDir,
     isValidFile
