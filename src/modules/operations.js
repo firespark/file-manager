@@ -1,6 +1,6 @@
 import { createReadStream, createWriteStream, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { writeFile, rename } from 'node:fs/promises';
+import { writeFile, rename, unlink } from 'node:fs/promises';
 
 import { currentDirectory } from '../index.js';
 import { isValidDir, isValidFile } from './common.js';
@@ -94,9 +94,48 @@ const cp = async (file, newDir) => {
 
 };
 
+const mv = async (file, newDir) => {
+    try {
+        if (isValidDir(newDir)) {
+
+            const fileOrigin = join(currentDirectory, file);
+            const fileCopy = join(newDir, file);
+
+            if (!existsSync(fileOrigin)) {
+                console.error(`File ${file} does not exist`);
+                return;
+            }
+            if (existsSync(fileCopy)) {
+                console.error(`File ${fileCopy} already exists`);
+                return;
+            }
+
+            const readStream = createReadStream(fileOrigin);
+            const writeStream = createWriteStream(fileCopy);
+
+            readStream.on('end', function() {
+                unlink(fileOrigin);
+            });
+
+            await readStream.pipe(writeStream);
+
+        }
+        else {
+            console.log(`Directory ${newDir} does not exist`);
+            return;
+        }
+    }
+    catch (error) {
+        //console.log(error);
+        console.error('Could not copy a file');
+    }
+
+};
+
 export {
     cat,
     add,
     rn,
-    cp
+    cp,
+    mv
 }
