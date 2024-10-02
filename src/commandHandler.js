@@ -4,6 +4,7 @@ import * as navigation from './modules/navigation.js';
 import * as operations from './modules/operations.js';
 import { osHandler } from './modules/os.js';
 import { hash } from './modules/hash.js';
+import { compress, decompress } from './modules/compress.js';
 
 const checkCommand = async (command) => {
     const commandArray = command.split(/\s+/);
@@ -57,6 +58,14 @@ const checkCommand = async (command) => {
 
         case 'hash':
             await hash(commandArray[1]);
+            break;
+
+        case 'compress':
+            await compress(commandArray[1], commandArray[2]);
+            break;
+
+        case 'decompress':
+            await decompress(commandArray[1], commandArray[2]);
             break;
 
 

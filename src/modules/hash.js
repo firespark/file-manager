@@ -1,26 +1,23 @@
 import { createReadStream } from 'node:fs';
 import { createHash } from 'node:crypto';
-import { join, dirname } from 'node:path';
+import { join, isAbsolute } from 'node:path';
 
 import { currentDirectory } from '../index.js';
 import { isValidFile } from './common.js';
 
 const hash = async (file) => {
 
-    const fileHash = dirname(file) == '' ? file : join(currentDirectory, file);
-    
+    const fileHash = isAbsolute(file) ? file : join(currentDirectory, file);
     
     if (isValidFile(fileHash)) {
         const hash = createHash('sha256');
         const stream = await createReadStream(fileHash);
 
-        stream.on('data', (chunk) => {
+        for await (const chunk of stream) {
             hash.update(chunk);
-        });
+        }
 
-        stream.on('end', () => {
-            console.log(hash.digest('hex'));
-        });
+        console.log(hash.digest('hex'));
 
         stream.on('error', (err) => {
             console.error(`Error reading file: ${err.message}`);
@@ -29,7 +26,7 @@ const hash = async (file) => {
     }
 
     else {
-        console.error("Invalid file");
+        console.error(`Invalid file ${fileHash}`);
     }
 
 };
