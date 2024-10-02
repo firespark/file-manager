@@ -1,13 +1,14 @@
-import { createReadStream, createWriteStream, existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { createReadStream, createWriteStream } from 'node:fs';
+import { join, isAbsolute, basename } from 'node:path';
 import { writeFile, rename, unlink } from 'node:fs/promises';
 
 import { currentDirectory } from '../index.js';
-import { isValidDir, isValidFile } from './common.js';
+import { isValidDir, isValidFile, pathExists } from './common.js';
 
 const cat = async (file) => {
-    const fileRead = join(currentDirectory, file);
-    if (isValidFile(fileRead)) {
+    const fileRead = isAbsolute(file) ? file : join(currentDirectory, file);
+    
+    if (await isValidFile(fileRead)) {
         const stream = createReadStream(fileRead);
 
         for await (const chunk of stream) {
@@ -21,9 +22,9 @@ const cat = async (file) => {
 
 const add = async (fileName) => {
     try {
-        const fileAdd = join(currentDirectory, fileName);
+        const fileAdd = isAbsolute(fileName) ? fileName : join(currentDirectory, fileName);
 
-        if (existsSync(fileAdd)) {
+        if (await pathExists(fileAdd)) {
             console.error('File already exists');
             return;
         } 
@@ -39,14 +40,14 @@ const add = async (fileName) => {
 
 const rn = async (oldName, newName) => {
     try {
-        const oldFile = join(currentDirectory, oldName);
-        const newFile = join(currentDirectory, newName);
+        const oldFile = isAbsolute(oldName) ? oldName : join(currentDirectory, oldName);
+        const newFile = isAbsolute(newName) ? newName : join(currentDirectory, newName);
 
-        if (!existsSync(oldFile)) {
+        if (!(await pathExists(oldFile))) {
             console.error(`File ${oldName} does not exist`);
             return;
         } 
-        if (existsSync(newFile)) {
+        if (await pathExists(newFile)) {
             console.error(`File ${newName} already exists`);
             return;
         }
@@ -55,7 +56,7 @@ const rn = async (oldName, newName) => {
         console.log(`File ${oldFile} has been successfully renamed into ${newFile}`);
     }
     catch (error) {
-        //console.log(error);
+        console.log(error);
         console.error('Could not rename a file');
     }
 
@@ -63,16 +64,17 @@ const rn = async (oldName, newName) => {
 
 const cp = async (file, newDir) => {
     try {
-        if (isValidDir(newDir)) {
+        if (await isValidDir(newDir)) {
 
-            const fileOrigin = join(currentDirectory, file);
-            const fileCopy = join(newDir, file);
+            const fileOrigin = isAbsolute(file) ? file : join(currentDirectory, file);
+            const fileName = basename(fileOrigin);
+            const fileCopy = join(newDir, fileName);
 
-            if (!existsSync(fileOrigin)) {
+            if (!(await pathExists(fileOrigin))) {
                 console.error(`File ${file} does not exist`);
                 return;
             }
-            if (existsSync(fileCopy)) {
+            if (await pathExists(fileCopy)) {
                 console.error(`File ${fileCopy} already exists`);
                 return;
             }
@@ -98,16 +100,17 @@ const cp = async (file, newDir) => {
 
 const mv = async (file, newDir) => {
     try {
-        if (isValidDir(newDir)) {
+        if (await isValidDir(newDir)) {
+            const fileOrigin = isAbsolute(file) ? file : join(currentDirectory, file);
+            const fileName = basename(fileOrigin);
 
-            const fileOrigin = join(currentDirectory, file);
-            const fileCopy = join(newDir, file);
+            const fileCopy = join(newDir, fileName);
 
-            if (!existsSync(fileOrigin)) {
+            if (!(await pathExists(fileOrigin))) {
                 console.error(`File ${file} does not exist`);
                 return;
             }
-            if (existsSync(fileCopy)) {
+            if (await pathExists(fileCopy)) {
                 console.error(`File ${fileCopy} already exists`);
                 return;
             }
@@ -145,9 +148,9 @@ const mv = async (file, newDir) => {
 const rm = async (file) => {
     try {
 
-        const fileDel = join(currentDirectory, file);
+        const fileDel = isAbsolute(file) ? file : join(currentDirectory, file);
 
-        if (!existsSync(fileDel)) {
+        if (!(await pathExists(fileDel))) {
             console.error(`File ${file} does not exist`);
             return;
         }

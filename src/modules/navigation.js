@@ -1,6 +1,6 @@
 import { readdir } from 'node:fs/promises';
-import { lstatSync } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { lstat } from 'node:fs/promises';
+import { join, dirname, isAbsolute } from 'node:path';
 
 import { currentDirectory, changeCurrentDirectory } from '../index.js';
 import { colors, isValidDir } from './common.js';
@@ -8,29 +8,44 @@ import { printFilesAsTable } from './fileFunctions.js';
 
 
 const ls = async (dir = currentDirectory) => {
-    if (isValidDir(dir)) {
+    if (await isValidDir(dir)) {
         let files = await readdir(dir);
 
-        printFilesAsTable(files, dir);
+        await printFilesAsTable(files, dir);
+    }
+    else {
+        console.error('Not a valid directory');
     }
 };
 
 const up = async () => {
-    
+
     let upDirectory = dirname(currentDirectory);
-    if (isValidDir(upDirectory)) {
+    if (await isValidDir(upDirectory)) {
         changeCurrentDirectory(upDirectory);
     }
-    
+    else {
+        console.error('Not a valid directory');
+    }
 };
 
 const cd = async (dir) => {
-    
-    if (isValidDir(dir)) {
-        changeCurrentDirectory(dir);
+    try {
+        const targetDir = isAbsolute(dir) ? dir : join(currentDirectory, dir);
+
+        if (await isValidDir(targetDir)) {
+            changeCurrentDirectory(targetDir);
+            console.log(`Changed directory to: ${targetDir}`);
+        }
+        else {
+            console.error('Not a valid directory');
+        }
     }
-    
+    catch (error) {
+        console.error('An error occurred while changing the directory:', error.message);
+    }
 };
+
 
 const stat = async (file) => {
     if (!file) {
@@ -38,7 +53,7 @@ const stat = async (file) => {
         return;
     }
     try {
-        const stats = lstatSync(join(currentDirectory, file));
+        const stats = await lstat(join(currentDirectory, file));
         console.log(stats)
     }
     catch {

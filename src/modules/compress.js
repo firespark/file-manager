@@ -1,5 +1,6 @@
 import { createReadStream, createWriteStream } from 'fs';
-import { existsSync } from 'node:fs';
+import { pathExists } from './common.js';
+import { currentDirectory } from '../index.js';
 import { createBrotliCompress, createBrotliDecompress } from 'zlib';
 import { join, isAbsolute, parse } from 'node:path';
 
@@ -11,16 +12,16 @@ const compress = async (file, dest) => {
         const archiveName = parse(filePath).base + '.br';
         const archivePath = join(destPath, archiveName);
 
-        if (!existsSync(filePath)) {
+        if (!(await pathExists(filePath))) {
             console.error(`File ${filePath} does not exist`);
             return;
         }
-        if (!existsSync(destPath)) {
+        if (!(await pathExists(destPath))) {
             console.error(`Folder ${destPath} does not exist`);
             return;
         }
 
-        if (existsSync(archivePath)) {
+        if (await pathExists(archivePath)) {
             console.error(`File ${archivePath} already exists`);
             return;
         }
@@ -35,7 +36,7 @@ const compress = async (file, dest) => {
 
     }
     catch (error) {
-        console.log(error);
+        //console.log(error);
         console.error('Could not compress a file');
     }
 
@@ -51,16 +52,16 @@ const decompress = async (file, dest) => {
         const fileName = archiveName.endsWith('.br') ? archiveName.slice(0, -3) : archiveName;
         const filePath = join(destPath, fileName);
 
-        if (!existsSync(archivePath)) {
+        if (!(await pathExists(archivePath))) {
             console.error(`File ${archivePath} does not exist`);
             return;
         }
-        if (!existsSync(destPath)) {
+        if (!(await pathExists(destPath))) {
             console.error(`Folder ${destPath} does not exist`);
             return;
         }
 
-        if (existsSync(filePath)) {
+        if (await pathExists(filePath)) {
             console.error(`File ${filePath} already exists`);
             return;
         }
@@ -75,8 +76,8 @@ const decompress = async (file, dest) => {
 
     }
     catch (error) {
-        console.log(error);
-        console.error('Could not compress a file');
+        //console.log(error);
+        console.error('Could not decompress a file');
     }
 
 

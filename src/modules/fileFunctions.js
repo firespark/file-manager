@@ -1,4 +1,4 @@
-import { lstatSync } from 'node:fs';
+import { lstat } from 'node:fs/promises';
 import { join, extname } from 'node:path';
 import { colors } from './common.js';
 
@@ -10,9 +10,9 @@ function formatFileSize(bytes) {
     return `${sizeInUnit.toFixed(2)} ${sizes[i]}`;
 }
 
-function printFilesAsTable(files, dir) {
+async function printFilesAsTable(files, dir) {
 
-    const sortedFiles = getSortedFilesAndDirectories(files, dir);
+    const sortedFiles = await getSortedFilesAndDirectories(files, dir);
 
     const headers = ['Name', 'Size', 'Type'];
 
@@ -58,41 +58,45 @@ function printFilesAsTable(files, dir) {
     });
 }
 
-function getSortedFilesAndDirectories(files, dir) {
+async function getSortedFilesAndDirectories(files, dir) {
 
-    const sortedFiles = files.map(item => {
-        const fullPath = join(dir, item);
-        let stats;
+    const sortedFiles = await Promise.all(
+        files.map(async (item) => {
+            const fullPath = join(dir, item);
+            let stats;
 
-        try {
-            stats = lstatSync(fullPath); 
-        }
-        catch {
+            try {
+                stats = await lstat(fullPath);
+            } catch {
+                return {
+                    name: item,
+                    ext: extname(item).slice(1),
+                    fullPath: fullPath,
+                    size: formatFileSize(0),
+                    type: 'Protected',
+                    isDirectory: false,
+                };
+            }
+
             return {
                 name: item,
                 ext: extname(item).slice(1),
                 fullPath: fullPath,
-                size: formatFileSize(0),
-                type: 'Protected',
-                isDirectory: false,
+                size: formatFileSize(stats.size),
+                type: stats.isDirectory() ? 'Directory' : 'File',
+                isDirectory: stats.isDirectory(),
             };
-        }
-        
-        return {
-            name: item,
-            ext: extname(item).slice(1),
-            fullPath: fullPath,
-            size: formatFileSize(stats.size),
-            type: stats.isDirectory() ? 'Directory' : 'File',
-            isDirectory: stats.isDirectory(),
-        };
-    });
+        })
+    );
+
 
     sortedFiles.sort((a, b) => {
         if (a.isDirectory && !b.isDirectory) return -1;
         if (!a.isDirectory && b.isDirectory) return 1;
         return a.name.localeCompare(b.name); 
     });
+
+    //console.log(sortedFiles)
 
     return sortedFiles;
 }

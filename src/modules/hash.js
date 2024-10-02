@@ -9,7 +9,7 @@ const hash = async (file) => {
 
     const fileHash = isAbsolute(file) ? file : join(currentDirectory, file);
     
-    if (isValidFile(fileHash)) {
+    if (await isValidFile(fileHash)) {
         const hash = createHash('sha256');
         const stream = await createReadStream(fileHash);
 

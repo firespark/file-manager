@@ -1,8 +1,8 @@
 import os from 'node:os';
 import { showCurrentDir } from './modules/common.js';
-import { checkCommand } from './commandHandler.js';
+import { checkCommand } from './handlers/commandHandler.js';
 import { colors } from './modules/common.js';
-import './exitHandler.js';
+import './handlers/exitHandler.js';
 
 const homeDirectory = os.homedir();
 

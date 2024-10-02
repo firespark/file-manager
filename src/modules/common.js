@@ -1,16 +1,28 @@
-import { lstatSync, existsSync } from 'node:fs';
+import { lstat, access } from 'node:fs/promises';
+import { isAbsolute } from 'node:path';
+
+const pathExists = async (path) => {
+    try {
+        await access(path);
+        return true;
+    } 
+    catch (error) {
+        return false;
+    }
+};
 
 const showCurrentDir = (dir) => {
     console.log(`\nYou are currently in ${dir}\n`);
 };
 
-const isValidDir = (dir) => {
+const isValidDir = async (dir) => {
 
     try {
 
-        if (existsSync(dir)) {
-            const stats = lstatSync(dir);
-
+        if (await pathExists(dir) && isAbsolute(dir)) {
+            
+            const stats = await lstat(dir);
+            
             return stats.isDirectory();
         }
         return false;
@@ -28,12 +40,12 @@ const isValidDir = (dir) => {
     }
 };
 
-const isValidFile = (file) => {
+const isValidFile = async (file) => {
 
     try {
 
-        if (existsSync(file)) {
-            const stats = lstatSync(file);
+        if (await pathExists(file)) {
+            const stats = await lstat(file);
 
             return stats.isFile();
         }
@@ -50,6 +62,17 @@ const isValidFile = (file) => {
         return false;
     }
 };
+
+const checkArgs = (args, argsMinNum) => {
+    for (let i = 1; i <= argsMinNum; i++) {
+
+        if (!args[i]) {
+            console.error(`This function requires ${argsMinNum} arguments`);
+            return false;
+        }
+    }
+    return true;
+}
 
 const colors = {
     reset: '\x1b[0m',
@@ -85,5 +108,7 @@ export {
     showCurrentDir,
     colors,
     isValidDir,
-    isValidFile
+    isValidFile,
+    checkArgs,
+    pathExists
 };
