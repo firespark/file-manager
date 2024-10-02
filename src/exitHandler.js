@@ -1,6 +1,7 @@
 import { username } from './index.js';
 import { colors } from './modules/common.js';
 
+  
 process.on('SIGINT', function () {
     process.exit(0);
 });

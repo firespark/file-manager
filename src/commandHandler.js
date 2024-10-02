@@ -2,7 +2,8 @@ import { currentDirectory } from './index.js';
 import { showCurrentDir } from './modules/common.js';
 import * as navigation from './modules/navigation.js';
 import * as operations from './modules/operations.js';
-import * as os from './modules/os.js';
+import { osHandler } from './modules/os.js';
+import { hash } from './modules/hash.js';
 
 const checkCommand = async (command) => {
     const commandArray = command.split(/\s+/);
@@ -22,8 +23,8 @@ const checkCommand = async (command) => {
         case 'stat':
             await navigation.stat(commandArray[1]);
             break;
-        
-        
+
+
         case 'cat':
             await operations.cat(commandArray[1]);
             break;
@@ -48,12 +49,17 @@ const checkCommand = async (command) => {
             await operations.rm(commandArray[1]);
             break;
 
-        
+
         case 'os':
-            await os.osHandler(commandArray[1]);
+            await osHandler(commandArray[1]);
             break;
 
-            
+
+        case 'hash':
+            await hash(commandArray[1]);
+            break;
+
+
         case 'exit':
             process.exit(0);
             break;
