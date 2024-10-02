@@ -5,19 +5,17 @@ import { writeFile, rename, unlink } from 'node:fs/promises';
 import { currentDirectory } from '../index.js';
 import { isValidDir, isValidFile } from './common.js';
 
-
 const cat = async (file) => {
     const fileRead = join(currentDirectory, file);
     if (isValidFile(fileRead)) {
-        const stream = await createReadStream(fileRead);
+        const stream = createReadStream(fileRead);
 
-        stream.on('data', (chunk) => {
+        for await (const chunk of stream) {
             process.stdout.write(`${chunk}\n`);
-        });
+        }
 
-        stream.on('error', (err) => {
-            console.error(`Error reading file: ${err.message}`);
-        });
+    } else {
+        console.error("Invalid file");
     }
 };
 
@@ -31,6 +29,7 @@ const add = async (fileName) => {
         } 
 
         await writeFile(fileAdd, '');
+        console.log(`File ${fileName} has been successfully created`);
     }
     catch (error) {
         console.error('Could not create a file');
@@ -53,6 +52,7 @@ const rn = async (oldName, newName) => {
         }
 
         await rename(oldFile, newFile);
+        console.log(`File ${oldFile} has been successfully renamed into ${newFile}`);
     }
     catch (error) {
         //console.log(error);
@@ -81,9 +81,11 @@ const cp = async (file, newDir) => {
             const writeStream = createWriteStream(fileCopy);
 
             await readStream.pipe(writeStream);
+
+            console.log(`File ${file} has been successfully copied into ${newDir}`);
         }
         else {
-            console.log(`Directory ${newDir} does not exist`);
+            console.error(`Directory ${newDir} does not exist`);
             return;
         }
     }
@@ -113,21 +115,29 @@ const mv = async (file, newDir) => {
             const readStream = createReadStream(fileOrigin);
             const writeStream = createWriteStream(fileCopy);
 
-            readStream.on('end', function() {
-                unlink(fileOrigin);
+            readStream.on('end', function () {
+                try {
+                    unlink(fileOrigin);
+                }
+                catch {
+                    console.error(`Could not delete the file`);
+                }
+                
             });
 
             await readStream.pipe(writeStream);
 
+            console.log(`File ${file} has been successfully moved into ${newDir}`);
+
         }
         else {
-            console.log(`Directory ${newDir} does not exist`);
+            console.error(`Directory ${newDir} does not exist`);
             return;
         }
     }
     catch (error) {
         //console.log(error);
-        console.error('Could not move a file');
+        console.error('Could not move the file');
     }
 
 };
@@ -143,6 +153,7 @@ const rm = async (file) => {
         }
 
         await unlink(fileDel);
+        console.log(`File ${file} has been successfully deleted`);
 
     }
     catch (error) {

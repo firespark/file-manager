@@ -6,7 +6,8 @@ import './exitHandler.js';
 
 const homeDirectory = os.homedir();
 
-let username = 'Sweetie';
+//let username = 'Sweetie';
+let username = os.userInfo().username;
 let currentDirectory = homeDirectory;
 
 const args = process.argv.slice(2);
@@ -16,7 +17,7 @@ function changeCurrentDirectory(dir) {
 }
 
 for (let i = 0; i < args.length; i += 1) {
-    const propArr = args[i].replace('--', '').split('=');
+    const propArr = args[i].replaceAll('-', '').split('=');
     if (propArr.length == 2 && propArr[0] == 'username') {
         username = propArr[1];
         break;

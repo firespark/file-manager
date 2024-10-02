@@ -12,6 +12,6 @@ process.on('exit', function() {
 
 process.on('uncaughtException', (err) => {
     console.error(`\n${colors.red}We are so sorry, ${username}, but the program crashed!\nHere's more data about it:${colors.reset}\n`);
-    console.error(err.stack);
+    console.error(err);
     process.exit(1);
 });
