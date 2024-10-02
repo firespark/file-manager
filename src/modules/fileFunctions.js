@@ -6,7 +6,7 @@ function formatFileSize(bytes) {
     const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
     if (bytes === 0) return '0 B';
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    const sizeInUnit = bytes / Math.pow(1024, i); 
+    const sizeInUnit = bytes / Math.pow(1024, i);
     return `${sizeInUnit.toFixed(2)} ${sizes[i]}`;
 }
 
@@ -32,8 +32,9 @@ async function printFilesAsTable(files, dir) {
                 break;
             case 'zip':
             case 'rar':
-            case '.gz':
+            case 'gz':
             case '7z':
+            case 'br':
                 file.type = 'Archive'
                 fileColor = colors.lightMagenta;
                 break;
@@ -93,7 +94,7 @@ async function getSortedFilesAndDirectories(files, dir) {
     sortedFiles.sort((a, b) => {
         if (a.isDirectory && !b.isDirectory) return -1;
         if (!a.isDirectory && b.isDirectory) return 1;
-        return a.name.localeCompare(b.name); 
+        return a.name.localeCompare(b.name);
     });
 
     //console.log(sortedFiles)
